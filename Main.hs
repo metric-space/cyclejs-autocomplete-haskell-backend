@@ -7,6 +7,7 @@ import Trie
 import System.Directory
 import Data.Aeson (ToJSON,)
 import GHC.Generics
+import Network.Wai.Middleware.Static
 
 data Result = Result { results :: [String] } deriving (Show, Generic)
 
@@ -52,6 +53,9 @@ autoCompletePath x y = if x == ""
 
 -- server routes
 routes :: STrie -> ScottyM ()
-routes x = get "/:word" $ param "word" >>= ((flip autoCompletePath) x)
+routes x = do
+             middleware $ staticPolicy (noDots >-> addBase "static")
+             get "/" $ file "index.html"
+             get "/search/:word" $ param "word" >>= ((flip autoCompletePath) x)
 
 main = getTrie >>= either putStrLn (\x -> scotty 3000 (routes x)) 

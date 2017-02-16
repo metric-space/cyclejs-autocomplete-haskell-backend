@@ -13,5 +13,9 @@
  - React based interface
  - Dockerify the whole thing
 
+## Topics of Research 
+ - is my way of serializing the trie completely crap that the serialized way takes way more time than just simply building the trie from ground up :'(
+ - parallelizing construction of trie
+
 ## License 
  - MIT 

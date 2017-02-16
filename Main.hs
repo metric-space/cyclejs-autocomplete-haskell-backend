@@ -13,9 +13,6 @@ data Result = Result { results :: [String] } deriving (Show, Generic)
 
 instance ToJSON Result
 
-defaultFileName :: String
-defaultFileName = "trie.txt"
-
 dictionaryFile :: String
 dictionaryFile = "dictionary.txt"
 
@@ -34,15 +31,9 @@ getTrie :: IO (Either String STrie)
 getTrie = getFile dictionaryFile >>= 
               either 
                   (return . Left)
-                  (\z -> getFile defaultFileName >>= 
-                           either 
-                             (\_ -> do
-                                     let content = listIntoTrie $ lines z
-                                     writeFile defaultFileName (show content)
-                                     return (Right content))
-                             (\g -> do
-                                     let !stuff = read g
-                                     return (Right stuff)))
+                  (\z -> do
+                           let content = listIntoTrie $ lines z
+                           return (Right content))
 
 
 -- damn there has to be a mempty for Result
@@ -54,8 +45,8 @@ autoCompletePath x y = if x == ""
 -- server routes
 routes :: STrie -> ScottyM ()
 routes x = do
-             middleware $ staticPolicy (noDots >-> addBase "static")
-             get "/" $ file "index.html"
+             middleware $ staticPolicy (noDots >-> addBase "/Users/luke/projects/HASKELL/serverStuff/static")
+             get "/" $ file "./static/index.html"
              get "/search/:word" $ param "word" >>= ((flip autoCompletePath) x)
 
 main = getTrie >>= either putStrLn (\x -> scotty 3000 (routes x)) 

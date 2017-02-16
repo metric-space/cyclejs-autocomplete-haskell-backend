@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <link rel="import" href="bower_components/paper-autocomplete/paper-autocomplete.html">
+  <script src="bower_components/axios/dist/axios.min.js"></script>
+  <style>
+	  #my-id{
+            width:50%;
+	    margin: 0 auto;
+	    top:20rem;
+	  }
+  </style>
+ </head>
+ <body>
+  <paper-autocomplete id="my-id" label="Enter words to get dictionary completion" id="input-remote" remote-source="true" min-length="2"></paper-autocomplete>
+  <script>
+
+  document.querySelector('#input-remote').addEventListener('autocomplete-change', onChange);
+
+  function onChange(event) {
+    var input = document.querySelector('#input-remote');
+    var search = event.detail.option.text;
+
+    axios.get('/search/'+search)
+         .then(function(response){
+           input.suggestions(response.data.results);
+         })
+    };
+  }
+</script>
+ </body>
+</html>

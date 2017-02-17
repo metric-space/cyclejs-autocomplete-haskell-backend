@@ -4,7 +4,7 @@
   <link rel="import" href="bower_components/paper-autocomplete/paper-autocomplete.html">
   <script src="bower_components/axios/dist/axios.min.js"></script>
   <style>
-	  #my-id{
+	  #input-remote{
             width:50%;
 	    margin: 0 auto;
 	    top:20rem;
@@ -12,7 +12,7 @@
   </style>
  </head>
  <body>
-  <paper-autocomplete id="my-id" label="Enter words to get dictionary completion" id="input-remote" remote-source="true" min-length="2"></paper-autocomplete>
+  <paper-autocomplete label="Enter words to get dictionary completion" id="input-remote" remote-source="true" min-length="2"></paper-autocomplete>
   <script>
 
   document.querySelector('#input-remote').addEventListener('autocomplete-change', onChange);
@@ -20,13 +20,14 @@
   function onChange(event) {
     var input = document.querySelector('#input-remote');
     var search = event.detail.option.text;
-
+    console.log(search);
     axios.get('/search/'+search)
          .then(function(response){
-           input.suggestions(response.data.results);
+           response = response.data.results.slice(1,10);
+           console.log(response);
+	   input.suggestions(response.map(function(x){ return {"text":x}}));
          })
     };
-  }
 </script>
  </body>
 </html>

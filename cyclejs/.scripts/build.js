@@ -17,7 +17,7 @@ const compiler = webpack({
   ],
   output: {
     filename: 'bundle.js',
-    path: './public/'
+    path: '../static/'
   },
   module: {
     loaders: [
@@ -25,7 +25,11 @@ const compiler = webpack({
         test: /\.js$/,
         loader: 'babel',
         query: {
-          presets: ['es2015']
+          presets: ['es2015'],
+          plugins: ["syntax-jsx",
+                    [ "transform-react-jsx",
+                     { "pragma": "html" }
+                   ]],
         },
         exclude: /node_modules/
       }

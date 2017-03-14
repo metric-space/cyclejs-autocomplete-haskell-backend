@@ -7,7 +7,7 @@
  - [Orclev](https://github.com/orclev)'s Trie from [https://gist.github.com/orclev/1929451](https://gist.github.com/orclev/1929451)
  - Scotty
  - Aeson
- - Polymer for frontend
+ - Cyclejs for frontend
 
 ## Work yet to be done
  - Dockerify the whole thing

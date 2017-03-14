@@ -58,7 +58,7 @@ export function App (sources) {
         .filter(x => x != "")
         .map(x => {
             return {
-                url: 'http://localhost:3000/search/' + x,
+                url: './search/' + x,
                 category: 'results',
                 method: 'GET' }
 	})

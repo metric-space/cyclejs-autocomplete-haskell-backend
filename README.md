@@ -1,4 +1,4 @@
-## Autocomplete demo in Haskell
+## Autocomplete demo in Haskell (Work in progress)
  - Simple project that does dictionary based word-complete via a web interface
  - Mainly an experiment to play around with Haskell
 
@@ -10,6 +10,8 @@
  - Cyclejs for frontend
 
 ## Work yet to be done
+ - cyclejs code is all over the place, has to be cleaned up and documented
+ - autocomplete menu(table) has to be made scrollable
  - Dockerify the whole thing
 
 ## Topics of Research 

@@ -16,6 +16,10 @@ instance ToJSON Result
 dictionaryFile :: String
 dictionaryFile = "dictionary.txt"
 
+staticDirectory :: String
+staticDirectory = "/static"
+
+
 listIntoTrie :: [String] -> STrie
 listIntoTrie =  foldr (\x a -> insert x a ) emptyTrie 
 
@@ -43,10 +47,12 @@ autoCompletePath x y = if x == ""
                         else  json (Result {results = (autoComplete x y)})
 
 -- server routes
-routes :: STrie -> ScottyM ()
-routes x = do
-             middleware $ staticPolicy (noDots >-> addBase "/Users/luke/projects/HASKELL/serverStuff/static")
+routes :: String -> STrie -> ScottyM ()
+routes x y = do
+             middleware $ staticPolicy (noDots >-> addBase (x ++ staticDirectory))
              get "/" $ file "./static/index.html"
-             get "/search/:word" $ param "word" >>= ((flip autoCompletePath) x)
+             get "/search/:word" $ param "word" >>= ((flip autoCompletePath) y)
 
-main = getTrie >>= either putStrLn (\x -> scotty 3000 (routes x)) 
+main = do
+       cwd <- getCurrentDirectory 
+       getTrie >>= either putStrLn (\x -> scotty 3000 (routes cwd x)) 

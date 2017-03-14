@@ -44,7 +44,7 @@ getTrie = getFile dictionaryFile >>=
 autoCompletePath :: String -> STrie -> ActionM () 
 autoCompletePath x y = if x == "" 
                         then json (Result {results = []}) 
-                        else  json (Result {results = (autoComplete x y)})
+                        else  json (Result {results = (take 10 (autoComplete x y))})
 
 -- server routes
 routes :: String -> STrie -> ScottyM ()

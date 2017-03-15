@@ -22,29 +22,26 @@ function AutoComplete(props){
 	  </div>)
 }
 
-export function App (sources) {
 
-  const http$ = sources.HTTP.select('results')
+function appAtomStreams({DOM,HTTP}){
+  const http$ = HTTP.select('results')
           .flatten()
           .map(res => res.body.results)
 	  .startWith([])
-	  .debug()
 
-  const inputStream$ = sources
-          .DOM
+  const staticInputStream$ = DOM
 	  .select(".autocomplete")
 	  .events("input")
 	  .map(ev => ev.target.value)
 	  .startWith("")
 
-  const chickenStream$ = http$.map(x => {
+  const dynamicInputStream$ = http$.map(x => {
         const indexes = []
-	console.log(x.length)
         for (var i = 0; i < x.length ; i++ ){
              indexes.push(i)
         }
    
-        return indexes.map(x => sources.DOM.select("."+xx+x).events("click"))
+        return indexes.map(x => DOM.select("."+xx+x).events("click"))
 	              .reduce((x,y) => xs.merge(x,y), xs.never())
 	              .map(ev => ev.srcElement.innerText)
                       .take(1)
@@ -52,9 +49,13 @@ export function App (sources) {
    }).flatten()
 
 
-   const mergedStream$ =  xs.merge(inputStream$, chickenStream$);
+  return {http$, staticInputStream$, dynamicInputStream$};
+}
 
-  const httpSinkStream$ = mergedStream$
+
+function appWriteToWorld(http$, inputStream$){
+
+  const httpSinkStream$ = inputStream$
         .filter(x => x != "")
         .map(x => {
             return {
@@ -63,11 +64,23 @@ export function App (sources) {
                 method: 'GET' }
 	})
 
-  const vdom$ =  xs.combine(mergedStream$,http$)
+  const vdom$ = xs.combine(inputStream$,http$)
           .map(z => {
 	     return <AutoComplete data={z[1]} value={z[0]} />
            })
-  
+
+  return {httpSinkStream$, vdom$}; 
+}
+
+
+export function App (sources) {
+
+  const {http$, staticInputStream$, dynamicInputStream$} = appAtomStreams(sources);
+
+  const inputStream$ = xs.merge(staticInputStream$, dynamicInputStream$);
+    
+  const {vdom$, httpSinkStream$} = appWriteToWorld(http$, inputStream$);
+
   const sinks = {
     DOM:  vdom$,
     HTTP: httpSinkStream$

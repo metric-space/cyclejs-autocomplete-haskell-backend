@@ -29,13 +29,13 @@ RUN curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | ba
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH      $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
-
-RUN npm install -g bower
-COPY ./* /
+ADD ./ /
 RUN cabal install
-WORKDIR static/
-RUN bower install
+WORKDIR cyclejs/
+RUN npm install 
+RUN npm run build
 WORKDIR /
-CMD [".cabal-sandbox/bin/autocomplete-demo","/"]
+EXPOSE 3000
+CMD cabal exec autocomplete-demo
 
 
